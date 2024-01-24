@@ -13,6 +13,7 @@ end
 
 Bundler.require :tools
 
+require "http/fake"
 require "refinements"
 require "tana"
 
