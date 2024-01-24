@@ -5,7 +5,7 @@ require "transactable"
 module Tana
   module Endpoints
     module Add
-      # Handles a repository create action.
+      # Adds a node to the graph.
       class Action
         include Import[:client]
         include Transactable
