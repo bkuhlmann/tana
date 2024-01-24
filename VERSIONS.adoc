@@ -1,0 +1,24 @@
+= Versions
+
+== 0.0.0 (2024-01-23)
+
+* 🟢 Added API client - Brooke Kuhlmann
+* 🟢 Added RSpec HTTP Fake requirement - Brooke Kuhlmann
+* 🟢 Added add action endpoint - Brooke Kuhlmann
+* 🟢 Added add request - Brooke Kuhlmann
+* 🟢 Added client - Brooke Kuhlmann
+* 🟢 Added configuration content - Brooke Kuhlmann
+* 🟢 Added configuration loader - Brooke Kuhlmann
+* 🟢 Added container - Brooke Kuhlmann
+* 🟢 Added gem dependencies - Brooke Kuhlmann
+* 🟢 Added import - Brooke Kuhlmann
+* 🟢 Added monad extensions - Brooke Kuhlmann
+* 🟢 Added node model - Brooke Kuhlmann
+* 🟢 Added node request - Brooke Kuhlmann
+* 🟢 Added node response - Brooke Kuhlmann
+* 🟢 Added project skeleton - Brooke Kuhlmann
+* 🟢 Added request levels - Brooke Kuhlmann
+* 🟢 Added request node - Brooke Kuhlmann
+* 🟢 Added response levels - Brooke Kuhlmann
+* 🟢 Added root model - Brooke Kuhlmann
+* 🟢 Added root response - Brooke Kuhlmann

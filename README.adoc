@@ -1,0 +1,532 @@
+:toc: macro
+:toclevels: 5
+:figure-caption!:
+
+:api_link: link:https://tana.inc/docs/input-api[Input API]
+:bundler_inline_link: link:https://alchemists.io/articles/ruby_bundler_inline[Bundler Inline]
+:data_link: link:https://alchemists.io/articles/ruby_data[Data]
+:dry_monads_link: link:https://dry-rb.org/gems/dry-monads[Dry Monads]
+:dry_schema_link: link:https://dry-rb.org/gems/dry-schema[Dry Schema]
+:dry_validation_link: link:https://dry-rb.org/gems/dry-validation[Dry Validation]
+:function_composition_link: link:https://alchemists.io/articles/ruby_function_composition[Function Composition]
+:pattern_matching_link: link:https://alchemists.io/articles/ruby_pattern_matching[Pattern Matching]
+:tana_link: link:https://tana.inc[Tana]
+:transactable_link: link:https://alchemists.io/projects/transactable[Transactable]
+
+= Tana
+
+This gem is a monadic API client for the {tana_link} Personal Knowledge Management (PKM) system. This allows you to build more sophisticated workflows atop the {api_link} using a design which leverages {function_composition_link} for a powerful, fault tolerant, workflow.
+
+With this gem, you have a convenient building block to automate your workflows or even use this gem to transfer data from other PKM systems into {tana_link}. 🎉
+
+toc::[]
+
+== Features
+
+* Provides an API client which implements Tana's limited, early access {api_link}.
+* Provides HTTP request and response verification using {dry_schema_link} and {dry_validation_link}.
+* Uses {function_composition_link} -- coupled with {transactable_link} -- to process each HTTP request and response.
+
+== Requirements
+
+. link:https://www.ruby-lang.org[Ruby].
+. {tana_link}.
+
+== Setup
+
+To install _with_ security, run:
+
+[source,bash]
+----
+# 💡 Skip this line if you already have the public certificate installed.
+gem cert --add <(curl --compressed --location https://alchemists.io/projects/tana/gems.pem)
+gem install tana --trust-policy HighSecurity
+----
+
+To install _without_ security, run:
+
+[source,bash]
+----
+gem install tana
+----
+
+You can also add the gem directly to your project:
+
+[source,bash]
+----
+bundle add tana
+----
+
+Once the gem is installed, you only need to require it:
+
+[source,ruby]
+----
+require "tana"
+----
+
+== Usage
+
+All interaction is via a `Tana` instance.
+
+=== Initialization
+
+You can initialize the API client -- using the defaults as described in the _Environment_ section below -- as follows:
+
+[source,ruby]
+----
+client = Tana.new
+----
+
+Further customization can be done via a block:
+
+[source,ruby]
+----
+client = Tana.new do |config|
+  config.accept = "application/json"   # Use custom HTTP header.
+  config.token = "abc123"              # Use custom/personal API key.
+  config.url = "https://api.tana.inc"  # Use custom API root.
+end
+----
+
+=== Environment
+
+Environment variable support can be managed using link:https://direnv.net[direnv]. These are the defaults:
+
+[source,bash]
+----
+TANA_API_ACCEPT=application/json
+TANA_API_TOKEN=
+TANA_API_URL=https://europe-west1-tagr-prod.cloudfunctions.net
+----
+
+_You must provide a `TANA_API_TOKEN` value to make authenticated API requests._ This can be done by creating an API token via the API tokens UI:
+
+image:https://alchemists.io/images/projects/tana/screenshots/api_tokens.png[API Tokens,width=714,height=334,role=focal_point]
+
+Here are the steps to view and make use of the UI shown above:
+
+. Click on _Settings_ within your Tana client.
+. Click on _API tokens_.
+. Click `Create` if you haven't already.
+. Copy and paste your API token as value for `TANA_API_TOKEN` key.
+. Refresh your environment accordingly.
+
+=== Identification
+
+When making API requests, you'll often need to acquire the IDs of the nodes you wish to add. This can be done two ways. The first is by selecting the node you are interested in, using `CONTROL + K` to launch the command prompt, and fuzzy type for _Copy link_. Example:
+
+image:https://alchemists.io/images/projects/tana/screenshots/copy_link.png[Copy Link,width=793,height=512,role=focal_point]
+
+Once copied the URL might look like `https://app.tana.inc?nodeid=z-p8LdQk6I76` but you'll only need the ID (i.e. `z-p8LdQk6I76`) for API requests.
+
+For supertags/fields, you can select the node you are interested in using `CONTROL + K` to launch the command prompt and fuzzy type for _Show API schema_. Example:
+
+image:https://alchemists.io/images/projects/tana/screenshots/show_api_schema.png[Show API Schema,width=578,height=875,role=focal_point]
+
+=== Endpoints
+
+At the moment, {tana_link} only provides the {api_link} which is a single endpoint for adding nodes only. This API has the following limitations:
+
+* Rate Limiting
+** One call per second per token.
+** Max 100 nodes created per call.
+** Max 5,000 characters in one request.
+* Additional Limitations
+** Can't target a relative Today node.
+** Must know the IDs of the supertag.
+** Each payload is capped at five kilobytes.
+** Can't add a checkbox child to a normal node.
+** No support for child templates.
+** No support for in-application links (i.e. anything that is not a http/https scheme).
+
+==== Add
+
+To add nodes (i.e. {api_link}), you only need to send the `#add` message. Here's a quick example of adding a simple node to your {tana_link} Inbox.
+
+[source,ruby]
+----
+client = Tana.new
+
+result = client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        name: "With plain node",
+        description: "A demonstration."
+      }
+    ]
+  }
+)
+
+result
+# Success(#<data Tana::Models::Root children=[#<data Tana::Models::Node id="agite1C3Tben", name="With plain node", description="A demonstration.", type="node", children=[]>]>)
+----
+
+The above will yield the following in your {tana_link} Inbox:
+
+image:https://alchemists.io/images/projects/tana/screenshots/inbox.png[Inbox,width=784,height=517,role=focal_point]
+
+You'll also notice, the result is a monad (i.e. {dry_monads_link}) which means you'll only get a `Success` or `Failure` which you can pipe with additional functionality or use {pattern_matching_link}.
+
+For successes, you'll be given a {data_link} object with a simple Object API for accessing the children of the response. At the root, you'll have a `Tana::Models::Root` instance which can be one or more `Tana::Models::Node` children. When you unpack the `Success` -- and to illustrate further -- you'll end up with the following:
+
+[source,ruby]
+----
+Tana::Models::Root[
+  children: [
+    Tana::Models::Node[
+      id: "agite1C3Tben",
+      name: "With plain node",
+      description: "A demonstration.",
+      type: "node",
+      children: []
+    ]
+  ]
+]
+----
+
+This simplifies and reduces the amount of work you have to do in your own program when processing the API result. For a `Failure`, you either get a `HTTP::Response` or a structured response that is a plain `Hash`. Example:
+
+[source,ruby]
+----
+{
+  "formErrors" => ["Invalid input"],
+  "fieldErrors" => {}
+}
+----
+
+Usually, errors are due to invalid authentication credentials or wrong data format. To experiment further, you can use this {bundler_inline_link} script:
+
+[source,ruby]
+----
+#! /usr/bin/env ruby
+# frozen_string_literal: true
+
+# Save as `demo`, then `chmod 755 demo`, and run as `./demo`.
+
+require "bundler/inline"
+
+gemfile true do
+  source "https://rubygems.org"
+
+  gem "amazing_print"
+  gem "debug"
+  gem "tana"
+end
+
+require "base64"
+
+include Dry::Monads[:result]
+
+render = lambda do |result|
+  case result
+    in Success(record) then puts record
+    in Failure(HTTP::Response => error) then puts error.body
+    in Failure(error) then ap error.errors
+    else abort "Unable to process result."
+  end
+end
+
+client = Tana.new
+----
+
+When you save the above and run it locally, you have a quick way to experiment with the API print out the results by using the `render` function which uses {pattern_matching_link} that I hinted at earlier. The following are additional examples you can experiment with by adding to the above script:
+
+*With Nesting*
+
+The following will allow you to create a deeply nested set of nodes. At the moment, your are limited to ten levels deep due to recursion limitations with the {dry_schema_link} and {dry_validation_link} gems.
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        name: "One",
+        children: [
+          {
+            name: "Two",
+            children: [
+              {
+                name: "Three",
+                children: [
+                  {
+                    name: "Four",
+                    children: [
+                      {
+                        name: "Five",
+                        children: [
+                          {
+                            name: "Six",
+                            children: [
+                              {
+                                name: "Seven",
+                                children: [
+                                  {
+                                    name: "Eight",
+                                    children: [
+                                      name: "Nine",
+                                      children: [
+                                        {name: "Ten"}
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+)
+----
+
+*With Field*
+
+The following allows you to create a node with a field (_you'll want to replace the attribute ID with your ID_).
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        name: "With field",
+        description: "A demonstration.",
+        children: [
+          {
+            attributeId: "zM582yzfcs-q",
+            type: "field",
+            children: [
+              {name: "💡 Idea"}
+            ]
+          }
+        ]
+      }
+    ]
+  }
+)
+----
+
+*With Supertags*
+
+The following allows you to create a node with supertags (_you'll want to replace the IDs with your own IDs_).
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        name: "With supertags",
+        description: "A demonstration.",
+        supertags: [
+          {id: "S9aMn7puHzUT"},
+          {id: "iWKs80kHI0SK"}
+        ]
+      }
+    ]
+  }
+)
+----
+
+*With Reference*
+
+The following will allow you to create a node with a reference to another node (_you'll want to replace with your own ID_):
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        dataType: "reference",
+        id: "H-vAUdPi8taR"
+      }
+    ]
+  }
+)
+----
+
+*With Date*
+
+The following will allow you to create a node with a date:
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        dataType: "date",
+        name: "2024-01-01T00:00:00Z"
+      }
+    ]
+  }
+)
+----
+
+*With URL*
+
+The following will allow you to create a node with a URL field (_you'll want to replace with your own ID):
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        type: "field",
+        attributeId: "OceDtN8c0CbR",
+        children: [
+          {
+            dataType: "url",
+            name: "https://alchemists.io"
+          }
+        ]
+      }
+    ]
+  }
+)
+----
+
+*With Checkbox*
+
+The following will allow you to create a node with a checkbox:
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        name: "With checkbox",
+        dataType: "boolean",
+        value: true
+      }
+    ]
+  }
+)
+----
+
+*With Attachment*
+
+The following will allow you to create a node with an attachment. This requires the _Base64_ gem as shown required in the script above because you need to encode your attachment before making the API request.
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "INBOX",
+    nodes: [
+      {
+        dataType: "file",
+        file: Base64.strict_encode64(Pathname("sunglasses.jpeg").read),
+        filename: "sunglasses.jpeg",
+        contentType: "image/jpeg"
+      }
+    ]
+  }
+)
+----
+
+*With Schema Field*
+
+The following will allow you to create a Schema field:
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "SCHEMA",
+    nodes: [
+      {
+        name: "demo",
+        description: "With Schema field.",
+        supertags: [{id: "SYS_T02"}]
+      }
+    ]
+  }
+)
+----
+
+*With Schema Supertag*
+
+The following will allow you to create a Schema supertag:
+
+[source,ruby]
+----
+render.call client.add(
+  {
+    targetNodeId: "SCHEMA",
+    nodes: [
+      {
+        name: "demo",
+        description: "With Schema supertag.",
+        supertags: [{id: "SYS_T01"}]
+      }
+    ]
+  }
+)
+----
+
+== Development
+
+To contribute, run:
+
+[source,bash]
+----
+git clone https://github.com/bkuhlmann/tana
+cd tana
+bin/setup
+----
+
+You can also use the IRB console for direct access to all objects:
+
+[source,bash]
+----
+bin/console
+----
+
+== Tests
+
+To test, run:
+
+[source,bash]
+----
+bin/rake
+----
+
+== link:https://alchemists.io/policies/license[License]
+
+== link:https://alchemists.io/policies/security[Security]
+
+== link:https://alchemists.io/policies/code_of_conduct[Code of Conduct]
+
+== link:https://alchemists.io/policies/contributions[Contributions]
+
+== link:https://alchemists.io/projects/tana/versions[Versions]
+
+== link:https://alchemists.io/community[Community]
+
+== Credits
+
+* Built with link:https://alchemists.io/projects/gemsmith[Gemsmith].
+* Engineered by link:https://alchemists.io/team/brooke_kuhlmann[Brooke Kuhlmann].

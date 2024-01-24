@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: Please use the following metadata when citing this project in your work.
+title: Tana
+abstract: A monadic API client for the Tana Personal Knowledge Management system.
+version: 0.0.0
+license: Hippocratic-2.1
+date-released: 2024-01-23
+authors:
+  - family-names: Kuhlmann
+    given-names: Brooke
+    affiliation: Alchemists
+    orcid: https://orcid.org/0000-0002-5810-6268
+keywords:
+ - ruby
+ - api
+ - client
+ - knowledge
+ - tana
+repository-code: https://github.com/bkuhlmann/tana
+repository-artifact: https://rubygems.org/gems/tana
