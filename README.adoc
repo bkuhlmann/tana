@@ -383,7 +383,7 @@ render.call client.add(
 
 *With URL*
 
-The following will allow you to create a node with a URL field (_you'll want to replace with your own ID):
+The following will allow you to create a node with a URL field (_you'll want to replace with your own ID_):
 
 [source,ruby]
 ----

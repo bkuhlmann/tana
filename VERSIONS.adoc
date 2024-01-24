@@ -1,5 +1,12 @@
 = Versions
 
+== 0.1.0 (2024-02-05)
+
+* ✅ Fixed add action endpoint class description - Brooke Kuhlmann
+* 🔼 Updated to Caliber 0.50.0 - Brooke Kuhlmann
+* 🔼 Updated to Reek 6.3.0 - Brooke Kuhlmann
+* ⛔️ Removed string refinement from configuration loader - Brooke Kuhlmann
+
 == 0.0.0 (2024-01-23)
 
 * 🟢 Added API client - Brooke Kuhlmann
