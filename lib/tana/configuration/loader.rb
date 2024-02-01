@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
-require "refinements/string"
-
 module Tana
   module Configuration
     # Handles loading of configuration with environment defaults.
     class Loader
-      using Refinements::String
-
       def initialize model = Content, environment: ENV
         @model = model
         @environment = environment
