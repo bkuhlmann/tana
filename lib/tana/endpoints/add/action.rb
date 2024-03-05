@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "transactable"
+require "pipeable"
 
 module Tana
   module Endpoints
@@ -8,7 +8,7 @@ module Tana
       # Adds a node to the graph.
       class Action
         include Import[:client]
-        include Transactable
+        include Pipeable
 
         # rubocop:todo Metrics/ParameterLists
         def initialize(
