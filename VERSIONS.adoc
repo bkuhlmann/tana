@@ -1,5 +1,13 @@
 = Versions
 
+== 0.3.0 (2024-03-09)
+
+* 🟢 Added Pipeable gem - Brooke Kuhlmann
+* 🔼 Updated to Amazing Print 1.6.0 - Brooke Kuhlmann
+* 🔼 Updated to Infusible 3.4.0 - Brooke Kuhlmann
+* ⛔️ Removed the Transactable gem - Brooke Kuhlmann
+* 🔁 Refactored implementation to use Pipeable gem - Brooke Kuhlmann
+
 == 0.2.0 (2024-03-03)
 
 * 🔼 Updated RuboCop to use XDG local configuration - Brooke Kuhlmann
