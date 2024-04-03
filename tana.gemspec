@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "dry-validation", "~> 1.10"
   spec.add_dependency "http", "~> 5.1"
   spec.add_dependency "infusible", "~> 3.5"
-  spec.add_dependency "pipeable", "~> 0.1"
+  spec.add_dependency "pipeable", "~> 0.2"
   spec.add_dependency "refinements", "~> 12.1"
   spec.add_dependency "zeitwerk", "~> 2.6"
 
