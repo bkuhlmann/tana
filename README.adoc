@@ -10,8 +10,8 @@
 :dry_validation_link: link:https://dry-rb.org/gems/dry-validation[Dry Validation]
 :function_composition_link: link:https://alchemists.io/articles/ruby_function_composition[Function Composition]
 :pattern_matching_link: link:https://alchemists.io/articles/ruby_pattern_matching[Pattern Matching]
+:pipeable_link: link:https://alchemists.io/projects/pipeable[Pipeable]
 :tana_link: link:https://tana.inc[Tana]
-:transactable_link: link:https://alchemists.io/projects/transactable[Transactable]
 
 = Tana
 
@@ -25,7 +25,7 @@ toc::[]
 
 * Provides an API client which implements Tana's limited, early access {api_link}.
 * Provides HTTP request and response verification using {dry_schema_link} and {dry_validation_link}.
-* Uses {function_composition_link} -- coupled with {transactable_link} -- to process each HTTP request and response.
+* Uses {function_composition_link} -- coupled with {pipeable_link} -- to process each HTTP request and response.
 
 == Requirements
 
