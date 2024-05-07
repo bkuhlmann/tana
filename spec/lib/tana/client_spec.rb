@@ -15,9 +15,9 @@ RSpec.describe Tana::Client do
 
     it "fails with invalid token" do
       client = described_class.new { |config| config.token = "bogus" }
-      error = client.add({targetNodeId: "INBOX", nodes: [{name: "Test"}]}).failure.body.to_s
+      failure = client.add({targetNodeId: "INBOX", nodes: [{name: "Test"}]}).failure
 
-      expect(error).to eq("Was not able to decode token")
+      expect(failure.status).to eq(400)
     end
   end
 end

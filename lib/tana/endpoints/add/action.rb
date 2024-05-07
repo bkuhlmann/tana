@@ -31,7 +31,7 @@ module Tana
                insert(**),
                to(client, :post),
                try(:parse, catch: JSON::ParserError),
-               validate(response),
+               validate(response, as: :to_h),
                to(model, :for)
         end
 
