@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.metadata = {
     "bug_tracker_uri" => "https://github.com/bkuhlmann/tana/issues",
     "changelog_uri" => "https://alchemists.io/projects/tana/versions",
-    "documentation_uri" => "https://alchemists.io/projects/tana",
+    "homepage_uri" => "https://alchemists.io/projects/tana",
     "funding_uri" => "https://github.com/sponsors/bkuhlmann",
     "label" => "Tana",
     "rubygems_mfa_required" => "true",
