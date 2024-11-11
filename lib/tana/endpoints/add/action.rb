@@ -7,7 +7,7 @@ module Tana
     module Add
       # Adds a node to the graph.
       class Action
-        include Import[:client]
+        include Dependencies[:client]
         include Pipeable
 
         # rubocop:todo Metrics/ParameterLists

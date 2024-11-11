@@ -3,7 +3,7 @@
 module Tana
   # The primary interface for making API requests.
   class Client
-    include Import[:configuration]
+    include Dependencies[:configuration]
 
     def initialize(endpoint: Endpoints::Add::Action.new, **)
       @endpoint = endpoint

@@ -6,7 +6,7 @@ module Tana
   module API
     # A low-level API client for making basic HTTP requests.
     class Client
-      include Import[:configuration, :http]
+      include Dependencies[:configuration, :http]
       include Dry::Monads[:result]
 
       def post path, body = nil, **parameters

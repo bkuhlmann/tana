@@ -3,5 +3,5 @@
 require "infusible"
 
 module Tana
-  Import = Infusible[Container]
+  Dependencies = Infusible[Container]
 end
