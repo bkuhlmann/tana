@@ -13,6 +13,7 @@ end
 
 Bundler.require :tools
 
+require "dry/monads"
 require "http/fake"
 require "refinements"
 require "tana"
@@ -43,4 +44,6 @@ RSpec.configure do |config|
     mocks.verify_doubled_constant_names = true
     mocks.verify_partial_doubles = true
   end
+
+  config.before(:suite) { Dry::Monads.load_extensions :rspec }
 end

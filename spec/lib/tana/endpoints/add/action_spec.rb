@@ -32,7 +32,7 @@ RSpec.describe Tana::Endpoints::Add::Action do
     it "answers created node" do
       result = endpoint.call({nodes: [{name: "Test"}]})
 
-      expect(result.success).to eq(
+      expect(result).to be_success(
         Tana::Models::Root[
           children: [
             Tana::Models::Node[id: "rZrx3T6rsKpX", name: "Test", type: "node"]
