@@ -72,4 +72,12 @@ RSpec.describe Tana::Endpoints::Add::Action do
       end
     end
   end
+
+  describe "#inspect" do
+    it "answers request and reponse as classes" do
+      expect(described_class.new.inspect).to include(
+        "@request=Tana::Requests::Add, @response=Dry::Schema::JSON"
+      )
+    end
+  end
 end

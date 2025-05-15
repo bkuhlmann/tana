@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "inspectable"
 require "pipeable"
 
 module Tana
@@ -8,6 +9,7 @@ module Tana
       # Adds a node to the graph.
       class Action
         include Dependencies[:client]
+        include Inspectable[request: :class, response: :class]
         include Pipeable
 
         # rubocop:todo Metrics/ParameterLists
